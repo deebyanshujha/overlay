@@ -1,0 +1,69 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "OVERLAY",
+  "version": "1.0.1",
+  "identifier": "com.overlay.studio",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1430",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "windows": [
+      {
+        "label": "main",
+        "title": "OVERLAY",
+        "width": 1180,
+        "height": 780,
+        "minWidth": 940,
+        "minHeight": 640,
+        "resizable": true,
+        "decorations": false,
+        "transparent": true,
+        "shadow": true,
+        "center": true,
+        "visible": false,
+        "dragDropEnabled": false
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' asset: http://asset.localhost data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self' data:; connect-src 'self' ipc: http://ipc.localhost",
+      "assetProtocol": {
+        "enable": true,
+        "scope": [
+          "$APPLOCALDATA/**",
+          "$TEMP/overlay-dropzone/**",
+          "$LOCALDATA/com.wallflow.app/wallpapers/**"
+        ]
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis", "msi"],
+    "publisher": "OVERLAY",
+    "copyright": "OVERLAY",
+    "category": "Utility",
+    "shortDescription": "Windows desktop customization studio",
+    "longDescription": "OVERLAY is a modular Windows desktop customization studio. Every customization is optional, configurable and reversible: widgets, taskbar appearance, a floating dock, a system HUD, a control centre and a file dropzone, all switchable per profile, with the original Windows desktop captured up front and restorable at any time.",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "nsis": {
+        "installMode": "currentUser",
+        "displayLanguageSelector": false,
+        "languages": ["English"],
+        "startMenuFolder": "OVERLAY"
+      },
+      "wix": {
+        "language": ["en-US"]
+      }
+    }
+  }
+}

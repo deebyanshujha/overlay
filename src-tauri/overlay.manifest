@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  The single application manifest for every binary this crate produces — the
+  app itself and every test harness.
+
+  Two things make it necessary rather than boilerplate:
+
+  * Something in the dependency graph imports `TaskDialogIndirect`, which
+    exists only in version 6 of comctl32. Without the dependency below the
+    loader binds version 5, the import cannot be resolved, and the process
+    dies at startup with STATUS_ENTRYPOINT_NOT_FOUND — which is exactly what
+    every test binary did before this manifest existed.
+
+  * OVERLAY positions windows across displays that may have different scale
+    factors, so it must declare PerMonitorV2 rather than let Windows bitmap-
+    stretch its widgets.
+
+  tauri-build would normally supply its own manifest, but two manifests in one
+  binary is a hard link error (CVT1100). build.rs therefore hands this file to
+  tauri-build as *the* manifest, and also passes it to the linker for test
+  targets, which tauri-build does not touch.
+-->
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <dependency>
+    <dependentAssembly>
+      <assemblyIdentity
+        type="win32"
+        name="Microsoft.Windows.Common-Controls"
+        version="6.0.0.0"
+        processorArchitecture="*"
+        publicKeyToken="6595b64144ccf1df"
+        language="*"
+      />
+    </dependentAssembly>
+  </dependency>
+
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <!-- Windows 10 and 11. Claiming these is what stops Windows applying
+           compatibility shims and lying about the OS version. -->
+      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
+      <supportedOS Id="{1f676c76-80e1-4239-95bb-83d0f6d0da78}" />
+      <supportedOS Id="{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}" />
+      <supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}" />
+      <supportedOS Id="{e2011457-1546-43c5-a5fe-008deee3d3f0}" />
+    </application>
+  </compatibility>
+
+  <application xmlns="urn:schemas-microsoft-com:asm.v3">
+    <windowsSettings>
+      <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/pm</dpiAware>
+      <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+      <!-- Dropzone can hold paths from deep directory trees. -->
+      <longPathAware xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">true</longPathAware>
+      <activeCodePage xmlns="http://schemas.microsoft.com/SMI/2019/WindowsSettings">UTF-8</activeCodePage>
+    </windowsSettings>
+  </application>
+
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+    <security>
+      <requestedPrivileges>
+        <!-- OVERLAY never needs administrator rights: everything it changes
+             lives in HKCU or in its own windows. -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+</assembly>

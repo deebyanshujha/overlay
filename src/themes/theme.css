@@ -1,0 +1,377 @@
+/*
+ * OVERLAY design system.
+ *
+ * Premium minimal: deep graphite grounds, one restrained accent, hairline
+ * borders, and shadows used for depth rather than decoration. Two themes
+ * share every token name, so a component never branches on the theme — it
+ * reads a variable and the theme decides what that variable means.
+ *
+ *   [data-theme="minimal"]     understated, near-opaque, quiet
+ *   [data-theme="futuristic"]  translucent glass, ambient accent light
+ *
+ * The accent is a separate axis from the theme, set by [data-accent].
+ */
+
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ *
+ * Accents. Each is a hue the UI leans on sparingly: active nav, focus
+ * rings, the one primary button on a page. Never a background wash.
+ * ------------------------------------------------------------------ */
+
+:root,
+[data-accent="ice"] {
+  --accent-50: #eef6ff;
+  --accent-200: #bcd9fb;
+  --accent-400: #6aa9f0;
+  --accent-500: #4b90e2;
+  --accent-600: #3a76c4;
+  --accent-rgb: 75 144 226;
+}
+[data-accent="violet"] {
+  --accent-50: #f3efff;
+  --accent-200: #d6c9fb;
+  --accent-400: #a688f2;
+  --accent-500: #8c6ae6;
+  --accent-600: #7152c6;
+  --accent-rgb: 140 106 230;
+}
+[data-accent="emerald"] {
+  --accent-50: #e9fbf3;
+  --accent-200: #b4ecd4;
+  --accent-400: #5fd0a3;
+  --accent-500: #3cb98a;
+  --accent-600: #2d996f;
+  --accent-rgb: 60 185 138;
+}
+[data-accent="amber"] {
+  --accent-50: #fff6e8;
+  --accent-200: #fadfb0;
+  --accent-400: #f0b85a;
+  --accent-500: #e0a03c;
+  --accent-600: #bd822c;
+  --accent-rgb: 224 160 60;
+}
+[data-accent="rose"] {
+  --accent-50: #fff0f3;
+  --accent-200: #fbc9d4;
+  --accent-400: #f08099;
+  --accent-500: #e3637f;
+  --accent-600: #c24a66;
+  --accent-rgb: 227 99 127;
+}
+
+/* ------------------------------------------------------------------ *
+ * Minimal — the default. Graphite, high contrast, almost no transparency.
+ * ------------------------------------------------------------------ */
+
+:root,
+[data-theme="minimal"] {
+  --bg-base: #0d0e11;
+  --bg-sunken: #0a0b0d;
+  --bg-raised: #15171b;
+  --bg-overlay: #1b1e23;
+  --bg-hover: #212429;
+  --bg-active: #272b31;
+
+  --surface-glass: rgb(21 23 27 / 0.92);
+  --surface-blur: 18px;
+  --surface-saturate: 100%;
+
+  --text-primary: #eef0f3;
+  --text-secondary: #a8aeb8;
+  --text-tertiary: #71777f;
+  --text-inverse: #0d0e11;
+
+  --border-subtle: rgb(255 255 255 / 0.06);
+  --border-default: rgb(255 255 255 / 0.1);
+  --border-strong: rgb(255 255 255 / 0.18);
+
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 16px -4px rgb(0 0 0 / 0.5);
+  --shadow-lg: 0 18px 48px -12px rgb(0 0 0 / 0.65);
+  --shadow-glow: none;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  --ring: 0 0 0 2px var(--bg-base), 0 0 0 4px var(--accent-500);
+
+  --danger: #e5705f;
+  --danger-dim: rgb(229 112 95 / 0.14);
+  --warn: #e0a03c;
+  --warn-dim: rgb(224 160 60 / 0.14);
+  --ok: #4fc08d;
+  --ok-dim: rgb(79 192 141 / 0.14);
+
+  --font-sans: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "Cascadia Code", "Consolas", ui-monospace, monospace;
+  --font-display: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --dur-fast: 120ms;
+  --dur: 220ms;
+  --dur-slow: 420ms;
+}
+
+/* ------------------------------------------------------------------ *
+ * Futuristic — translucent glass, ambient accent light, floating panels.
+ * Same tokens, different answers.
+ * ------------------------------------------------------------------ */
+
+[data-theme="futuristic"] {
+  --bg-base: #080a12;
+  --bg-sunken: #05060b;
+  --bg-raised: rgb(22 26 42 / 0.72);
+  --bg-overlay: rgb(28 33 52 / 0.82);
+  --bg-hover: rgb(40 47 72 / 0.7);
+  --bg-active: rgb(52 60 90 / 0.75);
+
+  --surface-glass: rgb(18 22 36 / 0.6);
+  --surface-blur: 28px;
+  --surface-saturate: 150%;
+
+  --text-primary: #f2f4fb;
+  --text-secondary: #aeb6cf;
+  --text-tertiary: #767e9c;
+  --text-inverse: #080a12;
+
+  --border-subtle: rgb(var(--accent-rgb) / 0.1);
+  --border-default: rgb(var(--accent-rgb) / 0.18);
+  --border-strong: rgb(var(--accent-rgb) / 0.32);
+
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 0.5);
+  --shadow-md: 0 8px 28px -8px rgb(0 0 0 / 0.6);
+  --shadow-lg: 0 24px 64px -16px rgb(0 0 0 / 0.75);
+  --shadow-glow: 0 0 36px -8px rgb(var(--accent-rgb) / 0.35);
+}
+
+/* Ambient light behind the futuristic shell. Pure decoration, so it is
+   drawn on a pseudo-element the content never has to account for. */
+[data-theme="futuristic"] body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(60rem 36rem at 12% -8%, rgb(var(--accent-rgb) / 0.16), transparent 60%),
+    radial-gradient(44rem 30rem at 102% 8%, rgb(var(--accent-rgb) / 0.1), transparent 55%),
+    radial-gradient(52rem 40rem at 50% 118%, rgb(var(--accent-rgb) / 0.08), transparent 60%);
+}
+
+/* ------------------------------------------------------------------ *
+ * Base
+ * ------------------------------------------------------------------ */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow: hidden;
+  /* Chrome's default drag-select makes a desktop app feel like a web page. */
+  user-select: none;
+  cursor: default;
+}
+
+input,
+textarea,
+[contenteditable] {
+  user-select: text;
+}
+
+/* Surfaces are transparent windows; the panel inside paints its own ground. */
+body[data-surface] {
+  background: transparent;
+}
+
+::selection {
+  background: rgb(var(--accent-rgb) / 0.3);
+}
+
+/* Focus is always visible for keyboards, never for mouse clicks. */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: none;
+  box-shadow: var(--ring);
+  border-radius: var(--radius-sm);
+}
+
+/* ------------------------------------------------------------------ *
+ * Scrollbars — slim, and only visible when there is something to scroll.
+ * ------------------------------------------------------------------ */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 99px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+  background-clip: content-box;
+}
+
+/* ------------------------------------------------------------------ *
+ * Reusable primitives
+ * ------------------------------------------------------------------ */
+
+.glass {
+  background: var(--surface-glass);
+  backdrop-filter: blur(var(--surface-blur)) saturate(var(--surface-saturate));
+  -webkit-backdrop-filter: blur(var(--surface-blur)) saturate(var(--surface-saturate));
+}
+
+.card {
+  background: var(--bg-raised);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+}
+
+[data-theme="futuristic"] .card {
+  backdrop-filter: blur(var(--surface-blur)) saturate(var(--surface-saturate));
+  -webkit-backdrop-filter: blur(var(--surface-blur)) saturate(var(--surface-saturate));
+}
+
+.hairline {
+  border-color: var(--border-subtle);
+}
+
+/*
+ * Widgets drawn without a panel sit directly on the wallpaper, which can be
+ * any colour at all — a bright sky makes light text vanish. A soft dark halo
+ * keeps them readable over anything without looking like a drop shadow on
+ * the panelled themes, where it is not applied.
+ */
+.widget-on-wallpaper {
+  text-shadow:
+    0 1px 2px rgb(0 0 0 / 0.55),
+    0 0 14px rgb(0 0 0 / 0.4);
+}
+
+/*
+ * The muted greys that read as "secondary" against a dark panel disappear
+ * against a bright wallpaper. Without a panel there is no controlled ground
+ * to be subtle against, so the hierarchy is carried by opacity and weight
+ * instead of by colour.
+ */
+.widget-on-wallpaper {
+  --text-secondary: rgb(255 255 255 / 0.88);
+  --text-tertiary: rgb(255 255 255 / 0.68);
+  --text-primary: #fff;
+}
+
+/* Numbers that update in place must not make the layout twitch. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum";
+}
+
+/* Drag region for frameless windows. Interactive children opt back out. */
+.drag {
+  -webkit-app-region: drag;
+}
+.no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* ------------------------------------------------------------------ *
+ * Motion
+ *
+ * Respect the OS setting *and* the in-app one: someone who gets motion
+ * sick should not have to find our preference to be comfortable.
+ * ------------------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+[data-reduce-motion="true"] *,
+[data-reduce-motion="true"] *::before,
+[data-reduce-motion="true"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+}
+
+@keyframes overlay-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes overlay-rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes overlay-shimmer {
+  from {
+    background-position: -200% 0;
+  }
+  to {
+    background-position: 200% 0;
+  }
+}
+
+.animate-rise {
+  animation: overlay-rise var(--dur) var(--ease) both;
+}
+
+.animate-fade {
+  animation: overlay-fade-in var(--dur) var(--ease) both;
+}
+
+/* Loading placeholder that reads as "content is coming", not as content. */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-raised) 25%,
+    var(--bg-hover) 37%,
+    var(--bg-raised) 63%
+  );
+  background-size: 200% 100%;
+  animation: overlay-shimmer 1.4s linear infinite;
+  border-radius: var(--radius-sm);
+}
